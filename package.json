@@ -1,0 +1,19 @@
+{
+  "name": "muvi",
+  "version": "0.0.0",
+  "description": "An app to make quick music videos",
+  "main": "index.js",
+  "scripts": {
+    "start:app": "cd muvi-app && npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kyntaz/muvi.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kyntaz/muvi/issues"
+  },
+  "homepage": "https://github.com/Kyntaz/muvi#readme"
+}
