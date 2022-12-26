@@ -59,9 +59,31 @@ export class MuViUI {
 
         if (!(preview instanceof HTMLVideoElement)) {
             console.error("Could not find preview element.");
-            return
+            return;
         }
 
         preview.src = URL.createObjectURL(source);
+    }
+
+    startPreview() {
+        const preview = document.getElementById("preview");
+
+        if (!(preview instanceof HTMLVideoElement)) {
+            console.error("Could not find preview element.");
+            return;
+        }
+
+        preview.play();
+    }
+
+    getHiddenCanvas() {
+        const canvas = document.getElementById("hidden-canvas");
+
+        if (!(canvas instanceof HTMLCanvasElement)) {
+            console.error("Could not find the hidden canvas.");
+            return null;
+        }
+
+        return canvas;
     }
 }

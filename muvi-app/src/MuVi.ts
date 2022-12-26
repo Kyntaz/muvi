@@ -1,19 +1,42 @@
 import { Camera } from "./Camera";
 import { MuViUI, UIEvents } from "./MuViUI/MuViUI";
+import { VideoManager } from "./VideoManager";
 
 export class MuVi {
     ui = new MuViUI();
     camera = new Camera();
+    videoManager = new VideoManager();
+
+    async renderPreview() {
+        const canvas = this.ui.getHiddenCanvas();
+
+        if (!canvas) {
+            console.error("No canvas found to render.");
+            return;
+        }
+
+        const preview = await this.videoManager.renderMaster(canvas);
+        this.ui.setPreview(preview);
+    }
 
     async initialize() {
         this.ui.render();
-        this.ui.setCameraSource(await this.camera.getStream());
-        
-        this.ui.setEvent(UIEvents.StartRecording, () => this.camera.record());
+
+        const cameraStream = await this.camera.getStream();
+        this.ui.setCameraSource(cameraStream);
+
+        const cameraSettings = cameraStream.getVideoTracks()[0].getSettings();
+        this.videoManager.setDimensions(cameraSettings.width ?? 200, cameraSettings.height ?? 200);
+
+        this.ui.setEvent(UIEvents.StartRecording, () => {
+            this.camera.record();
+            this.ui.startPreview();
+        });
         this.ui.setEvent(UIEvents.StopRecording, async () => {
             const blob = await this.camera.stop();
             if (blob) {
-                this.ui.setPreview(blob);
+                this.videoManager.addVideo(blob);
+                await this.renderPreview();
             }
         });
     }
