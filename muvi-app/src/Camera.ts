@@ -1,11 +1,9 @@
 export class Camera {
-    static #stream?: MediaStream;
-    static #recorder?: MediaRecorder;
-    static #data: Blob[] = [];
+    #stream?: MediaStream;
+    #recorder?: MediaRecorder;
+    #data: Blob[] = [];
 
-    private constructor() {}
-
-    static async getStream() {
+    async getStream() {
         if (!this.#stream) {
             this.#stream = await navigator.mediaDevices.getUserMedia({
                 video: true,
@@ -16,7 +14,7 @@ export class Camera {
         return this.#stream;
     }
 
-    static async record() {
+    async record() {
         console.log("Start recording.");
         const stream = await this.getStream();
 
@@ -25,7 +23,7 @@ export class Camera {
         this.#recorder.start();
     }
 
-    static async stop() {
+    async stop() {
         console.log("Stop recording.");
         return new Promise<Blob | null>((resolve) => {
             if (!this.#recorder) {

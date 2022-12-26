@@ -7,11 +7,9 @@ export enum UIEvents {
 }
 
 export class MuViUI {
-    static #events = new Map<UIEvents, () => void>();
+    #events = new Map<UIEvents, () => void>();
 
-    private constructor() {}
-
-    static #triggerEvent(id: UIEvents) {
+    #triggerEvent(id: UIEvents) {
         const event = this.#events.get(id);
         if (!event) {
             console.error("Event not set.");
@@ -20,11 +18,11 @@ export class MuViUI {
         event();
     }
 
-    static setEvent(id: UIEvents, event: () => void) {
+    setEvent(id: UIEvents, event: () => void) {
         this.#events.set(id, event);
     }
 
-    static #setupEventTriggers() {
+    #setupEventTriggers() {
         document.getElementById("record")?.addEventListener("click", () =>
             this.#triggerEvent(UIEvents.StartRecording));
         document.getElementById("stop-recording")?.addEventListener("click", () =>
@@ -32,7 +30,7 @@ export class MuViUI {
         
     }
 
-    static render() {
+    render() {
         const root = document.getElementById("root");
 
         if (!root) {
@@ -44,7 +42,7 @@ export class MuViUI {
         this.#setupEventTriggers();
     }
 
-    static setCameraSource(source: MediaStream) {
+    setCameraSource(source: MediaStream) {
         const display = document.getElementById("display");
 
         if (!(display instanceof HTMLVideoElement)) {
@@ -56,7 +54,7 @@ export class MuViUI {
         display.play();
     }
 
-    static setPreview(source: Blob) {
+    setPreview(source: Blob) {
         const preview = document.getElementById("preview");
 
         if (!(preview instanceof HTMLVideoElement)) {

@@ -2,21 +2,22 @@ import { Camera } from "./Camera";
 import { MuViUI, UIEvents } from "./MuViUI/MuViUI";
 
 export class MuVi {
-    static #ui = MuViUI;
-    static #camera = Camera;
+    ui = new MuViUI();
+    camera = new Camera();
 
-    static async initialize() {
-        this.#ui.render();
-        this.#ui.setCameraSource(await this.#camera.getStream());
+    async initialize() {
+        this.ui.render();
+        this.ui.setCameraSource(await this.camera.getStream());
         
-        this.#ui.setEvent(UIEvents.StartRecording, () => this.#camera.record());
-        this.#ui.setEvent(UIEvents.StopRecording, async () => {
-            const blob = await this.#camera.stop();
+        this.ui.setEvent(UIEvents.StartRecording, () => this.camera.record());
+        this.ui.setEvent(UIEvents.StopRecording, async () => {
+            const blob = await this.camera.stop();
             if (blob) {
-                this.#ui.setPreview(blob);
+                this.ui.setPreview(blob);
             }
         });
     }
 }
 
-MuVi.initialize();
+(window as any).MuVi = new MuVi();
+(window as any).MuVi.initialize();
