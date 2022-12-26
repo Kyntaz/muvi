@@ -8,15 +8,10 @@ export class MuVi {
     videoManager = new VideoManager();
 
     async renderPreview() {
-        const canvas = this.ui.getHiddenCanvas();
-
-        if (!canvas) {
-            console.error("No canvas found to render.");
-            return;
-        }
-
-        const preview = await this.videoManager.renderMaster(canvas);
-        this.ui.setPreview(preview);
+        this.ui.doWith(HTMLCanvasElement, "hidden-canvas", async (canvas) => {
+            const preview = await this.videoManager.renderMaster(canvas);
+            this.ui.setPreview(preview);
+        });
     }
 
     async initialize() {
