@@ -25,8 +25,10 @@ export class MuViUI {
     }
 
     static #setupEventTriggers() {
-        document.getElementById("record")?.addEventListener("click", () => this.#triggerEvent(UIEvents.StartRecording));
-        document.getElementById("stop-recording")?.addEventListener("click", () => this.#triggerEvent(UIEvents.StopRecording));
+        document.getElementById("record")?.addEventListener("click", () =>
+            this.#triggerEvent(UIEvents.StartRecording));
+        document.getElementById("stop-recording")?.addEventListener("click", () =>
+            this.#triggerEvent(UIEvents.StopRecording));
         
     }
 
