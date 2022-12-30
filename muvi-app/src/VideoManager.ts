@@ -1,6 +1,7 @@
 import etro from "etro";
 
 export class VideoManager {
+    readonly #canvas: HTMLCanvasElement = document.createElement("canvas");
     #videos: Blob[] = [];
     #width = 200;
     #height = 200;
@@ -28,8 +29,8 @@ export class VideoManager {
         });
     }
 
-    async renderMaster(canvas: HTMLCanvasElement) {
-        const movie = new etro.Movie({ canvas });
+    async renderMaster() {
+        const movie = new etro.Movie({ canvas: this.#canvas });
         movie.width = this.#width;
         movie.height = this.#height;
 

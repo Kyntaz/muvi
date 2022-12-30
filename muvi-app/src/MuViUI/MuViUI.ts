@@ -6,8 +6,23 @@ export enum UIEvents {
     StopRecording,
 }
 
+enum UIStates {
+    Preview,
+    PreRecording,
+    Recording,
+}
+
 export class MuViUI {
     #events = new Map<UIEvents, () => void>();
+    #state = UIStates.PreRecording;
+
+    #onState: Partial<Record<UIStates, () => void>> = {
+        [UIStates.Recording]: () => this.#triggerEvent(UIEvents.StartRecording),
+    };
+
+    #afterState: Partial<Record<UIStates, () => void>> = {
+        [UIStates.Recording]: () => this.#triggerEvent(UIEvents.StopRecording),
+    }
 
     doWith<ElementType extends typeof HTMLElement>(
         cls: ElementType,
@@ -33,15 +48,24 @@ export class MuViUI {
         event();
     }
 
+    #setState(state: UIStates) {
+        this.#afterState[this.#state]?.();
+        this.#onState[state]?.();
+        this.#state = state;
+    }
+
     setEvent(id: UIEvents, event: () => void) {
         this.#events.set(id, event);
     }
 
     #setupEventTriggers() {
-        document.getElementById("record")?.addEventListener("click", () =>
-            this.#triggerEvent(UIEvents.StartRecording));
-        document.getElementById("stop-recording")?.addEventListener("click", () =>
-            this.#triggerEvent(UIEvents.StopRecording));
+        document.getElementById("record-button")?.addEventListener("click", () => {
+            if (this.#state === UIStates.PreRecording) {
+                this.#setState(UIStates.Recording);
+            } else if (this.#state === UIStates.Recording) {
+                this.#setState(UIStates.PreRecording);
+            }
+        });
         
     }
 

@@ -8,10 +8,8 @@ export class MuVi {
     videoManager = new VideoManager();
 
     async renderPreview() {
-        this.ui.doWith(HTMLCanvasElement, "hidden-canvas", async (canvas) => {
-            const preview = await this.videoManager.renderMaster(canvas);
-            this.ui.setPreview(preview);
-        });
+        const preview = await this.videoManager.renderMaster();
+        this.ui.setPreview(preview);
     }
 
     async initialize() {
