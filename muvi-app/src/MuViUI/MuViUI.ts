@@ -1,5 +1,7 @@
 import template from "./MuViUI.html?raw";
 import "./MuViUI.css";
+import { StateManager } from "../StateManager";
+import { EventManager } from "../EventManager";
 
 export enum UIEvents {
     StartRecording,
@@ -13,16 +15,20 @@ enum UIStates {
 }
 
 export class MuViUI {
-    #events = new Map<UIEvents, () => void>();
-    #state = UIStates.PreRecording;
-
     #onState: Partial<Record<UIStates, () => void>> = {
-        [UIStates.Recording]: () => this.#triggerEvent(UIEvents.StartRecording),
+        [UIStates.Recording]: () => this.#eventManager.triggerEvent(UIEvents.StartRecording),
     };
 
     #afterState: Partial<Record<UIStates, () => void>> = {
-        [UIStates.Recording]: () => this.#triggerEvent(UIEvents.StopRecording),
+        [UIStates.Recording]: () => this.#eventManager.triggerEvent(UIEvents.StopRecording),
     }
+
+    #eventManager = new EventManager<UIEvents>();
+    #stateManager = new StateManager<UIStates>(
+        UIStates.PreRecording,
+        this.#onState,
+        this.#afterState
+    );
 
     doWith<ElementType extends typeof HTMLElement>(
         cls: ElementType,
@@ -39,31 +45,16 @@ export class MuViUI {
         action(element as InstanceType<ElementType>);
     }
 
-    #triggerEvent(id: UIEvents) {
-        const event = this.#events.get(id);
-        if (!event) {
-            console.error("Event not set.");
-            return;
-        }
-        event();
-    }
-
-    #setState(state: UIStates) {
-        this.#afterState[this.#state]?.();
-        this.#onState[state]?.();
-        this.#state = state;
-    }
-
     setEvent(id: UIEvents, event: () => void) {
-        this.#events.set(id, event);
+        this.#eventManager.setEvent(id, event);
     }
 
     #setupEventTriggers() {
         document.getElementById("record-button")?.addEventListener("click", () => {
-            if (this.#state === UIStates.PreRecording) {
-                this.#setState(UIStates.Recording);
-            } else if (this.#state === UIStates.Recording) {
-                this.#setState(UIStates.PreRecording);
+            if (this.#stateManager.currentState === UIStates.PreRecording) {
+                this.#stateManager.setState(UIStates.Recording);
+            } else if (this.#stateManager.currentState === UIStates.Recording) {
+                this.#stateManager.setState(UIStates.PreRecording);
             }
         });
         
