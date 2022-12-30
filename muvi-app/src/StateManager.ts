@@ -16,9 +16,7 @@ export class StateManager<StateType extends string | number> {
     }
 
     setState(state: StateType) {
-        if (this.#currentState) {
-            this.#afterState[this.#currentState]?.();
-        }
+        this.#afterState[this.#currentState]?.();
         this.#onState[state]?.();
         this.#currentState = state;
     }
