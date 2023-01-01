@@ -4,7 +4,8 @@
   "description": "An app to make quick music videos",
   "main": "index.js",
   "scripts": {
-    "start:app": "cd muvi-app && npm run dev"
+    "start:app": "cd muvi-app && npm run dev",
+    "build:app": "cd muvi-app && npm run build"
   },
   "repository": {
     "type": "git",
